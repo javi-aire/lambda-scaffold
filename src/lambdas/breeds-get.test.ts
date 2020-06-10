@@ -31,6 +31,9 @@ describe('breeds-get handler', () => {
       json: () => {
         return mockPayload
       },
+      error: () => {
+        return mockTimeoutObject
+      },
     })
   })
 
@@ -39,11 +42,11 @@ describe('breeds-get handler', () => {
     expect(response).toMatchObject({ body: mockResponseObject })
   })
 
+  // Test should pass, but unsure if written correctly
   it('handles gracefully given an external call timeout', async () => {
-    try {
-      await handler()
-    } catch (e) {
-      expect(e).toMatchObject(mockTimeoutObject)
-    }
+    const asyncMock = mockedFetch.mockRejectedValue(mockTimeoutObject)
+    const mockResponse = await asyncMock()
+    const response = await mockResponse.error()
+    expect(response).toMatchObject(mockTimeoutObject)
   })
 })

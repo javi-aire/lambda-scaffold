@@ -1,6 +1,7 @@
 import fetch from 'node-fetch'
 import AbortController from 'abort-controller'
 
+// Tried handling timeout here but may occur intermittently
 export default async function fetchWithTimeout(url: string, timeout?: number): Promise<any> {
   const FETCH_TIMEOUT: number = timeout || 5000
   const controller = new AbortController()
@@ -9,8 +10,6 @@ export default async function fetchWithTimeout(url: string, timeout?: number): P
   try {
     const response = await fetch(url, { timeout: FETCH_TIMEOUT, signal: controller.signal })
     result = await response.json()
-
-    return Promise.resolve(result)
   } catch (error) {
     if (error.name === 'AbortError') {
       result = {
